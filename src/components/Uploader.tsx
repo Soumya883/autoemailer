@@ -89,10 +89,14 @@ export default function Uploader({ employeeId }: { employeeId?: string }) {
       if (queueItems.length === 0) throw new Error("No valid emails found in the Excel sheet.");
 
       setProgress('Fetching sender credentials...');
-      const { data: senders, error: senderError } = await supabase.from('senders').select('email').limit(1);
+      const { data: senders, error: senderError } = await supabase
+        .from('senders')
+        .select('email')
+        .eq('user_id', employeeId)
+        .limit(1);
       
       if (senderError || !senders || senders.length === 0) {
-        throw new Error("No sender configured in the 'senders' table.");
+        throw new Error("No sender configured in the 'senders' table. Please add your credentials above.");
       }
       
       const senderEmail = senders[0].email;
