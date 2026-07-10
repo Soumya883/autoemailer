@@ -90,7 +90,7 @@ export default function Uploader() {
       const chunkSize = 500;
       for (let i = 0; i < queueItems.length; i += chunkSize) {
         const chunk = queueItems.slice(i, i + chunkSize);
-        const { error: insertError } = await supabase.from('queue').insert(chunk);
+        const { error: insertError } = await supabase.from('queue').insert(chunk as any[]);
         if (insertError) throw new Error(`Error inserting to queue: ${insertError.message}`);
       }
 
