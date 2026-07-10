@@ -7,7 +7,7 @@ import mammoth from 'mammoth';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 
-export default function Uploader() {
+export default function Uploader({ employeeId }: { employeeId?: string }) {
   const [excelFile, setExcelFile] = useState<File | null>(null);
   const [wordFile, setWordFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -54,8 +54,22 @@ export default function Uploader() {
       setProgress(`Preparing ${clients.length} emails...`);
 
       const queueItems = clients.map(client => {
-        const name = client.Name || client.name || client.First_Name || client.firstName || 'Valued Client';
-        const email = client.Email || client.email || client.emailAddress;
+        let name = 'Valued Client';
+        let email = '';
+
+        for (const [key, value] of Object.entries(client)) {
+          if (typeof value !== 'string' && typeof value !== 'number') continue;
+          const strVal = String(value);
+          const lowerKey = key.toLowerCase();
+
+          if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(strVal)) {
+            email = strVal;
+          }
+          
+          if (lowerKey.includes('name') || lowerKey.includes('first')) {
+            name = strVal;
+          }
+        }
 
         if (!email) return null;
 
@@ -63,6 +77,7 @@ export default function Uploader() {
         const personalizedBody = bodyTemplate.replace(/\{Name\}/gi, name);
 
         return {
+          employee_id: employeeId || null,
           recipient_email: email,
           sender_email: '', // Placeholder, will set below
           subject: personalizedSubject,
