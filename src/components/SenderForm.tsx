@@ -31,8 +31,8 @@ export default function SenderForm({ userId }: { userId: string }) {
 
   return (
     <div className="bg-[#111111] border border-gray-800 rounded-2xl p-8">
-      <h2 className="text-2xl font-bold mb-4 text-red-400">Action Required: Configure Sender</h2>
-      <p className="text-gray-400 mb-6">You must configure a Google App Password before you can queue emails.</p>
+      <h2 className="text-2xl font-bold mb-4 text-blue-400">Add Sender Account</h2>
+      <p className="text-gray-400 mb-6">Configure a Google Account with a 16-digit App Password for employees to use.</p>
       
       {error && <div className="mb-4 text-red-400 text-sm">{error}</div>}
       

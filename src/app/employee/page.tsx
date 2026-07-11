@@ -1,7 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import Uploader from '@/components/Uploader';
-import SenderForm from '@/components/SenderForm';
 
 export default async function EmployeeDashboard() {
   const supabase = await createClient();
@@ -10,8 +9,6 @@ export default async function EmployeeDashboard() {
   if (!user) redirect('/login');
 
   const { data: profile } = await supabase.from('users').select('*').eq('id', user.id).single();
-  const { data: senders } = await supabase.from('senders').select('*').eq('user_id', user.id);
-  const hasSender = senders && senders.length > 0;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
@@ -27,15 +24,11 @@ export default async function EmployeeDashboard() {
         </header>
 
         <div className="grid grid-cols-1 gap-8">
-          {hasSender ? (
-            <div className="bg-[#111111] border border-gray-800 rounded-2xl p-8">
-              <h2 className="text-2xl font-bold mb-4">Queue New Campaign</h2>
-              <p className="text-gray-400 mb-8">Upload your Excel contact list and Word template below.</p>
-              <Uploader employeeId={user.id} />
-            </div>
-          ) : (
-            <SenderForm userId={user.id} />
-          )}
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-4">Queue New Campaign</h2>
+            <p className="text-gray-400 mb-8">Upload your Excel contact list and Word template below.</p>
+            <Uploader employeeId={user.id} />
+          </div>
         </div>
       </div>
     </div>

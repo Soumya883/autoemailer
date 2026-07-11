@@ -91,17 +91,14 @@ export default function Uploader({ employeeId }: { employeeId?: string }) {
       setProgress('Fetching sender credentials...');
       const { data: senders, error: senderError } = await supabase
         .from('senders')
-        .select('email')
-        .eq('user_id', employeeId)
-        .limit(1);
+        .select('email');
       
       if (senderError || !senders || senders.length === 0) {
-        throw new Error("No sender configured in the 'senders' table. Please add your credentials above.");
+        throw new Error("No sender accounts are configured by the admin.");
       }
       
-      const senderEmail = senders[0].email;
       queueItems.forEach(item => {
-        if (item) item.sender_email = senderEmail;
+        if (item) item.sender_email = senders[Math.floor(Math.random() * senders.length)].email;
       });
 
       setProgress(`Saving ${queueItems.length} emails to queue...`);

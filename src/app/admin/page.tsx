@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { Users, Mail, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import SenderForm from '@/components/SenderForm';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -12,6 +13,7 @@ export default async function AdminDashboard() {
 
   const { data: queueItems } = await supabase.from('queue').select('status, employee_id');
   const { data: employees } = await supabase.from('users').select('*').eq('role', 'employee');
+  const { data: senders } = await supabase.from('senders').select('email');
 
   const totalSent = queueItems?.filter(q => q.status === 'sent').length || 0;
   const totalFailed = queueItems?.filter(q => q.status === 'failed').length || 0;
@@ -59,6 +61,25 @@ export default async function AdminDashboard() {
             </div>
             <p className="text-4xl font-bold">{totalFailed}</p>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-6">Configured Sender Accounts</h2>
+            {senders && senders.length > 0 ? (
+              <ul className="space-y-4">
+                {senders.map((s, i) => (
+                  <li key={i} className="text-gray-300 bg-black/40 p-4 rounded-xl border border-gray-800 flex items-center">
+                    <Mail className="w-5 h-5 mr-3 text-blue-400" />
+                    {s.email}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500">No sender accounts configured.</p>
+            )}
+          </div>
+          <SenderForm userId={user.id} />
         </div>
 
         <div className="bg-[#111111] border border-gray-800 rounded-2xl p-8">
